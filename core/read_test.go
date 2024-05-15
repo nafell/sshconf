@@ -15,7 +15,7 @@ func TestSplitBlocks(t *testing.T) {
 		want want
 	}{
 		{
-			name: "normal",
+			name: "normal (two entries)",
 			args: `Host example1
   HostName example.com
   Port 22
@@ -31,6 +31,17 @@ Host example2
   IdentityFile /Users/joe/.ssh/aaa_rsa
   IdentitiesOnly yes`,
 			want: want{lines:14, blocks:2, firstBlockLines:7},
+		},
+		{
+			name: "normal (one entry)",
+			args: `Host example1
+  HostName example.com
+  Port 22
+  User joe
+  PreferredAuthentications publickey
+  IdentityFile /Users/joe/.ssh/aaa_rsa
+  IdentitiesOnly yes`,
+			want: want{lines:7, blocks:1, firstBlockLines:7},
 		},
 	}
 
