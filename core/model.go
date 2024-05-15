@@ -50,7 +50,7 @@ func SplitEntryBlocks(content string) (*ConfigFileInfo, error) {
 	
 	hostEntryPositions := []int{}
 	for i, line := range lines {
-		if (strings.HasPrefix(line, "Host ")) {
+		if (strings.HasPrefix(line, "Host")) {
 			hostEntryPositions = append(hostEntryPositions,i)
 		}
 	}
@@ -75,23 +75,24 @@ func SplitEntryBlocks(content string) (*ConfigFileInfo, error) {
 func MapStruct(configFileInfo *ConfigFileInfo) []HostEntry {
 	results := []HostEntry{}
 	for i, block := range configFileInfo.Blocks {
-		label := strings.Replace(block[0], "Host ", "", 1)
+		label := strings.TrimSpace(strings.Replace(block[0], "Host", "", 1))
+		
 		hostName := ""
 		user := ""
 		port := "22"
+
+		keys := map[string]*string {
+			"HostName": &hostName, 
+			"User": &user, 
+			"Port": &port,
+		}
 		for _, line := range block {
 			trimmed_line := strings.TrimSpace(line)
-			if strings.HasPrefix(trimmed_line, "HostName") {
-				hostName = strings.TrimSpace(strings.Replace(trimmed_line, "HostName", "", 1))
-			} else if strings.HasPrefix(trimmed_line, "User") {
-				user = strings.TrimSpace(strings.Replace(trimmed_line, "User", "", 1))
-			} else if strings.HasPrefix(trimmed_line, "Port") {
-				portstr := strings.TrimSpace(strings.Replace(trimmed_line, "Port", "", 1))
-				//value, err := strconv.Atoi(portstr)
-				//if err != nil {
-				//	fmt.Println("Could not parse port setting for " + label)
-				//}
-				port = portstr
+			for key, value := range keys {
+				if strings.HasPrefix(trimmed_line, key) {
+					*value = strings.TrimSpace(strings.Replace(trimmed_line, key, "", 1))
+					break
+				}
 			}
 		}
 
