@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"strings"
 	"slices"
-	"os"
 	"regexp"
 
-	"github.com/pkg/errors"
+	//"github.com/pkg/errors"
 )
 
 /// Intended for single execution & program exit, does not edit []HostEntry
@@ -46,27 +45,6 @@ func WriteSetting(configFileInfo *ConfigFileInfo, hostEntries []HostEntry, hostL
 	err := saveFile(content)
 	if (err != nil) {
 		return err
-	}
-
-	return nil
-}
-
-func saveFile(content string) error {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return err
-	}
-
-	filepath := homeDir + config_path
-	file, err := os.OpenFile(filepath, os.O_WRONLY|os.O_CREATE, 0666)
-	if err != nil {
-		return errors.Wrap(err, "Failed to access file" + filepath)
-	}
-	defer file.Close()
-
-	_, errw := file.WriteString(content)
-	if errw != nil {
-		return errors.Wrap(errw, "Failed to write file" + filepath)
 	}
 
 	return nil
