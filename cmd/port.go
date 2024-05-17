@@ -47,7 +47,7 @@ to quickly create a Cobra application.`,
 			return
 		}
 
-		fmt.Printf("Successfully edited %v's Port to %s", hostLabel, newValue)
+		fmt.Printf("Successfully edited %v's Port to %s\n", hostLabel, newValue)
 	},
 }
 
