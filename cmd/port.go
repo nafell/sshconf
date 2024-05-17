@@ -14,14 +14,15 @@ import (
 
 // hostnameCmd represents the hostname command
 var portCmd = &cobra.Command{
-	Use:   "port",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Use:   "port <ENTRY_NAME> <NEW_PORT_NUMBER>",
+	Short: "Edits the Port setting of the specified entry",
+	Long: `Edits the Port setting of the specified entry
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+example: sshconf port fooServer 22
+
+This command operates on "UPSERT" basis,
+which REPLACES the existing value with <NEW_PORT_NUMBER> when the setting exists,
+or APPENDS "  Port <NEW_PORT_NUMBER>" to the entry when it does not.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs),
 	Run: func(cmd *cobra.Command, args []string) {
 		content, err := core.ReadConfigFile()

@@ -14,14 +14,15 @@ import (
 
 // hostnameCmd represents the hostname command
 var hostnameCmd = &cobra.Command{
-	Use:   "hostname",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Use:   "hostname <ENTRY_NAME> <NEW_HOST_NAME>",
+	Short: "Edits the HostName setting of the specified entry",
+	Long: `Edits the HostName setting of the specified entry
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+example: sshconf hostname fooServer 127.0.0.1
+
+This command operates on "UPSERT" basis,
+which REPLACES the existing value with <NEW_HOST_NAME> when the setting exists,
+or APPENDS "  HostName <NEW_HOST_NAME>" to the entry when it does not.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs),
 	Run: func(cmd *cobra.Command, args []string) {
 		content, err := core.ReadConfigFile()
