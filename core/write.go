@@ -26,7 +26,7 @@ func WriteSetting(configFileInfo *ConfigFileInfo, hostEntries []HostEntry, hostL
 				return err
 			}
 
-			configFileInfo.Lines[lineNumber] = pattern.ReplaceAllString(configFileInfo.Lines[lineNumber], "$1 " + newValue)
+			configFileInfo.Lines[lineNumber] = pattern.ReplaceAllString(configFileInfo.Lines[lineNumber], "$1" + newValue)
 		} else { // Add line
 			payload := "  " + settingKey + " " + newValue
 			lineNumber := entry.ConfigFilePosition + len(configFileInfo.Blocks[i])
