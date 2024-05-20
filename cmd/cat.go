@@ -1,15 +1,15 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
-	"github.com/spf13/cobra"
 	"github.com/nafell/sshconf/core"
+	"github.com/spf13/cobra"
 )
 
 // catCmd represents the cat command
@@ -22,19 +22,19 @@ var catCmd = &cobra.Command{
 "sshconf cat [Host]" prints the settings under entries exactly named "[Host]".`,
 	Run: func(cmd *cobra.Command, args []string) {
 		content, err := core.ReadConfigFile()
-		if (err != nil) {
-			fmt.Errorf("$v", err)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
 			return
 		}
-		
-		if (len(args) < 1) {
+
+		if len(args) < 1 {
 			fmt.Println(content)
 			return
 		}
 
 		configFileInfo, err := core.SplitEntryBlocks(content)
-		if (err != nil) {
-			fmt.Errorf("$v", err)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
 			return
 		}
 

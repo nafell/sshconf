@@ -8,27 +8,27 @@ import (
 
 func SplitEntryBlocks(content string) (*ConfigFileInfo, error) {
 	lines := strings.Split(content, "\n")
-	
+
 	hostEntryPositions := []int{}
 	for i, line := range lines {
-		if (strings.HasPrefix(line, "Host")) {
-			hostEntryPositions = append(hostEntryPositions,i)
+		if strings.HasPrefix(line, "Host") {
+			hostEntryPositions = append(hostEntryPositions, i)
 		}
 	}
 
 	entryLength := len(hostEntryPositions)
 	if entryLength < 1 {
-		return nil, errors.New("No host entry in config file.")
+		return nil, errors.New("no host entry in config file")
 	}
 	blocks := make([][]string, 0, entryLength)
 	for i := 0; i < entryLength-1; i++ {
-		blocks = append(blocks, lines[hostEntryPositions[i] : hostEntryPositions[i+1]])
+		blocks = append(blocks, lines[hostEntryPositions[i]:hostEntryPositions[i+1]])
 	}
 	blocks = append(blocks, lines[hostEntryPositions[entryLength-1]:])
 
 	return &ConfigFileInfo{
-		Lines: lines,
-		Blocks: blocks,
+		Lines:              lines,
+		Blocks:             blocks,
 		HostEntryPositions: hostEntryPositions,
 	}, nil
 }
@@ -37,15 +37,15 @@ func MapStruct(configFileInfo *ConfigFileInfo) []HostEntry {
 	results := []HostEntry{}
 	for i, block := range configFileInfo.Blocks {
 		label := strings.TrimSpace(strings.Replace(block[0], "Host", "", 1))
-		
+
 		hostName := ""
 		user := ""
 		port := "22"
 
-		keys := map[string]*string {
-			"HostName": &hostName, 
-			"User": &user, 
-			"Port": &port,
+		keys := map[string]*string{
+			"HostName": &hostName,
+			"User":     &user,
+			"Port":     &port,
 		}
 		for _, line := range block {
 			trimmed_line := strings.TrimSpace(line)
@@ -57,14 +57,14 @@ func MapStruct(configFileInfo *ConfigFileInfo) []HostEntry {
 			}
 		}
 
-		entry := HostEntry {
-			Label: label,
-			HostName: hostName,
-			User: user,
-			Port: port,
+		entry := HostEntry{
+			Label:              label,
+			HostName:           hostName,
+			User:               user,
+			Port:               port,
 			ConfigFilePosition: configFileInfo.HostEntryPositions[i],
 		}
-		
+
 		results = append(results, entry)
 	}
 

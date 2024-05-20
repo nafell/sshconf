@@ -1,15 +1,14 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
-	"log"
+	"os"
 
-	"github.com/spf13/cobra"
 	"github.com/nafell/sshconf/core"
+	"github.com/spf13/cobra"
 )
 
 // hostnameCmd represents the hostname command
@@ -26,14 +25,14 @@ or APPENDS "  Port <NEW_PORT_NUMBER>" to the entry when it does not.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs),
 	Run: func(cmd *cobra.Command, args []string) {
 		content, err := core.ReadConfigFile()
-		if (err != nil) {
-			log.Fatal(err)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
 			return
 		}
 
 		configFileInfo, err := core.SplitEntryBlocks(content)
-		if (err != nil) {
-			log.Fatal(err)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
 			return
 		}
 
@@ -42,9 +41,8 @@ or APPENDS "  Port <NEW_PORT_NUMBER>" to the entry when it does not.`,
 		newValue := args[1]
 
 		errW := core.WriteSetting(configFileInfo, hostEntries, hostLabel, "Port", newValue)
-
-		if (errW != nil) {
-			log.Fatal(errW)
+		if errW != nil {
+			fmt.Fprintln(os.Stderr, errW)
 			return
 		}
 

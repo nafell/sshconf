@@ -1,15 +1,15 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 
-	"github.com/nafell/sshconf/core"	
+	"github.com/nafell/sshconf/core"
 )
 
 // listCmd represents the list command
@@ -24,12 +24,12 @@ name user@example.com:22
 	Run: func(cmd *cobra.Command, args []string) {
 		contents, err := core.ReadConfigFile()
 		if err != nil {
-			fmt.Println(err)
+			fmt.Fprintln(os.Stderr, err)
 			return
 		}
 		configFileInfo, err := core.SplitEntryBlocks(contents)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Fprintln(os.Stderr, err)
 			return
 		}
 		entries := core.MapStruct(configFileInfo)

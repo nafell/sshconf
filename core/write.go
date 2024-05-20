@@ -2,31 +2,30 @@ package core
 
 import (
 	"fmt"
-	"strings"
-	"slices"
 	"regexp"
-
+	"slices"
+	"strings"
 	//"github.com/pkg/errors"
 )
 
-/// Intended for single execution & program exit, does not edit []HostEntry
+// / Intended for single execution & program exit, does not edit []HostEntry
 func WriteSetting(configFileInfo *ConfigFileInfo, hostEntries []HostEntry, hostLabel string, settingKey string, newValue string) error {
 	edited := false
 	for i, entry := range hostEntries {
-		if (entry.Label != hostLabel) {
+		if entry.Label != hostLabel {
 			continue
 		}
-		
+
 		index := findKeyIndex(configFileInfo.Blocks[i], settingKey)
 
 		if index != -1 { // Edit existing line
 			lineNumber := entry.ConfigFilePosition + index
 			pattern, err := regexp.Compile("(^[\t ]+" + settingKey + "[\t ]+)(.+)")
-			if (err != nil) {
+			if err != nil {
 				return err
 			}
 
-			configFileInfo.Lines[lineNumber] = pattern.ReplaceAllString(configFileInfo.Lines[lineNumber], "$1" + newValue)
+			configFileInfo.Lines[lineNumber] = pattern.ReplaceAllString(configFileInfo.Lines[lineNumber], "$1"+newValue)
 		} else { // Add line
 			payload := "  " + settingKey + " " + newValue
 			lineNumber := entry.ConfigFilePosition + len(configFileInfo.Blocks[i])
@@ -36,14 +35,14 @@ func WriteSetting(configFileInfo *ConfigFileInfo, hostEntries []HostEntry, hostL
 		edited = true
 	}
 
-	if edited == false {
-		return fmt.Errorf("Host '%s' not found.\n", hostLabel)
+	if !edited {
+		return fmt.Errorf("host '%s' not found", hostLabel)
 	}
 
 	// write file
 	content := strings.Join(configFileInfo.Lines, "\n")
 	err := saveFile(content)
-	if (err != nil) {
+	if err != nil {
 		return err
 	}
 
