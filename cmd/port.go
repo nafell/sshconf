@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/nafell/sshconf/core"
 	"github.com/spf13/cobra"
@@ -23,17 +22,15 @@ This command operates on "UPSERT" basis,
 which REPLACES the existing value with <NEW_PORT_NUMBER> when the setting exists,
 or APPENDS "  Port <NEW_PORT_NUMBER>" to the entry when it does not.`,
 	Args: cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		content, err := core.ReadConfigFile()
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return
+			return err
 		}
 
 		configFileInfo, err := core.SplitEntryBlocks(content)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return
+			return err
 		}
 
 		hostEntries := core.MapStruct(configFileInfo)
@@ -42,11 +39,11 @@ or APPENDS "  Port <NEW_PORT_NUMBER>" to the entry when it does not.`,
 
 		errW := core.WriteSetting(configFileInfo, hostEntries, hostLabel, "Port", newValue)
 		if errW != nil {
-			fmt.Fprintln(os.Stderr, errW)
-			return
+			return errW
 		}
 
 		fmt.Printf("Successfully edited %v's Port to %s\n", hostLabel, newValue)
+		return nil
 	},
 }
 

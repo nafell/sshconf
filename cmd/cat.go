@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/nafell/sshconf/core"
@@ -20,22 +19,20 @@ var catCmd = &cobra.Command{
 
 "sshconf cat"        prints the entire config.
 "sshconf cat [Host]" prints the settings under entries exactly named "[Host]".`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		content, err := core.ReadConfigFile()
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return
+			return err
 		}
 
 		if len(args) < 1 {
 			fmt.Println(content)
-			return
+			return nil
 		}
 
 		configFileInfo, err := core.SplitEntryBlocks(content)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return
+			return err
 		}
 
 		for _, block := range configFileInfo.Blocks {
@@ -45,6 +42,8 @@ var catCmd = &cobra.Command{
 
 			fmt.Println(strings.Join(block, "\n"))
 		}
+
+		return nil
 	},
 }
 

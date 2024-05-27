@@ -4,9 +4,6 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/spf13/cobra"
 
 	"github.com/nafell/sshconf/core"
@@ -21,16 +18,14 @@ var listCmd = &cobra.Command{
 The output will be shown as following:
 name user@example.com:22
 `,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		contents, err := core.ReadConfigFile()
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return
+			return err
 		}
 		configFileInfo, err := core.SplitEntryBlocks(contents)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return
+			return err
 		}
 		entries := core.MapStruct(configFileInfo)
 
@@ -38,6 +33,7 @@ name user@example.com:22
 			//fmt.Printf("%v", entry)
 			entry.PrintPretty()
 		}
+		return nil
 	},
 }
 
